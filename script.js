@@ -21,17 +21,22 @@ var getChatgptButtonElement = function (/** @type {string} */ prompt) {
 
 const mail_content_everyday = function () {
   return `
-  ${getChatgptButtonElement(`昨日の日本、中国、フランス、ロシア、英国、米国の株式市場について、分析して。また各国の注目株5選を紹介して。以上の結果をわかりやすくまとめて。`)}
+  ${getChatgptButtonElement(`人間の生活を変えたり業界変革を起こすような技術、スタートアップの情報を直近3ヶ月に絞って調べて、5つ選んでまとめて。`)}
   `;
 }
 
 const mail_content_week = function () {
   const day = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   switch (day) {
+    case 'Tuesday':
+      return `
+      ${getChatgptButtonElement(`直近一週間の日本、中国、フランス、ロシア、英国、米国の株式市場について、分析して。また各国で注目すべき個別銘柄5選をランダムに選んで紹介して。`)}
+      ${getChatgptButtonElement(`直近一週間の日本国内と海外でのセキュリティ関連の事件（ハッキング、障害）についてまとめて。`)}
+      `;
     case 'Thursday':
       return `
-      ${getChatgptButtonElement(`直近一週間、海外メディアが日本の経済と政治を報じた内容をわかりやすくまとめて。必要であれば過去の経緯を足して。`)}
-      ${getChatgptButtonElement(`セキュリティ関連の事件（ハッキング、障害）`)}
+      ${getChatgptButtonElement(`直近一週間の海外メディアが日本の経済と政治を報じた内容をわかりやすくまとめて。必要であれば過去の経緯を足して。`)}
+      ${getChatgptButtonElement(`癒やされる旅行先を5つ、直近一週間のSNSの投稿を参考にして選んで紹介して。総予算が5万円以内で行けるもので。`)}
       `;
     default:
       return ``;
