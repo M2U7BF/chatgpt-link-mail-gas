@@ -1,7 +1,29 @@
+// config ---------------------------------
+
+// 毎日送信するプロンプト
+const dailyPrompts = [
+  '人間の生活を変えたり業界変革を起こすような技術、スタートアップの情報を直近3ヶ月に絞って調べて、5つ選んでまとめて。'
+];
+
+// 各曜日のみ送信するプロンプト
+const mondayPrompts = [];
+const tuesdayPrompts = [
+  '直近一週間の日本、中国、フランス、ロシア、英国、米国の株式市場について、分析して。また各国で注目すべき個別銘柄5選をランダムに選んで紹介して。',
+  '直近一週間の日本国内と海外でのセキュリティ関連の事件（ハッキング、障害）についてまとめて。'
+];
+const wednesdayPrompts = [];
+const thursdayPrompts = [
+  '直近一週間の海外メディアが日本の経済と政治を報じた内容をわかりやすくまとめて。必要であれば過去の経緯を足して。',
+  '癒やされる旅行先を5つ、直近一週間のSNSの投稿を参考にして選んで紹介して。総予算が5万円以内で行けるもので。'
+];
+const fridayPrompts = [];
+const saturdayPrompts = [];
+const sundayPrompts = [];
+
 // util -----------------------------------
 var getChatgptUrl = function (/** @type {any} */ prompt) {
-  const chatgpt_url = `https://chatgpt.com/?mode=default&prompt=${encodeURI(prompt)}`
-  return chatgpt_url;
+  const chatgptUrl = `https://chatgpt.com/?mode=default&prompt=${encodeURI(prompt)}`
+  return chatgptUrl;
 };
 
 var createChatgptButtonElement = function (/** @type {string} */ prompt) {
@@ -19,35 +41,52 @@ var createChatgptButtonElement = function (/** @type {string} */ prompt) {
 
 // ----------------------------------------
 
+var promptsToButtonElements = function (/** @type {string[]} */ prompts) {
+  var html = '';
+  prompts.forEach(function (prompt) {
+    html += createChatgptButtonElement(prompt);
+  });
+  return html;
+}
+
 const createMailDailyContent = function () {
-  return `
-  ${createChatgptButtonElement(`人間の生活を変えたり業界変革を起こすような技術、スタートアップの情報を直近3ヶ月に絞って調べて、5つ選んでまとめて。`)}
-  `;
+  return promptsToButtonElements(dailyPrompts);
 }
 
 const createMailWeeklyContent = function () {
+  let prompts = [];
   const day = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+
   switch (day) {
+    case 'Monday':
+      prompts = mondayPrompts
+      break;
     case 'Tuesday':
-      return `
-      ${createChatgptButtonElement(`直近一週間の日本、中国、フランス、ロシア、英国、米国の株式市場について、分析して。また各国で注目すべき個別銘柄5選をランダムに選んで紹介して。`)}
-      ${createChatgptButtonElement(`直近一週間の日本国内と海外でのセキュリティ関連の事件（ハッキング、障害）についてまとめて。`)}
-      `;
+      prompts = tuesdayPrompts;
+      break;
+    case 'Wednesday':
+      prompts = wednesdayPrompts;
+      break;
     case 'Thursday':
-      return `
-      ${createChatgptButtonElement(`直近一週間の海外メディアが日本の経済と政治を報じた内容をわかりやすくまとめて。必要であれば過去の経緯を足して。`)}
-      ${createChatgptButtonElement(`癒やされる旅行先を5つ、直近一週間のSNSの投稿を参考にして選んで紹介して。総予算が5万円以内で行けるもので。`)}
-      `;
-    default:
-      return ``;
+      prompts = thursdayPrompts;
+      break;
+    case 'Friday':
+      prompts = fridayPrompts;
+      break;
+    case 'Saturday':
+      prompts = saturdayPrompts;
+      break;
+    case 'Sunday':
+      prompts = sundayPrompts;
+      break;
   }
+
+  return promptsToButtonElements(prompts);
 }
 
 const createButtonList = function () {
-  return `
-    ${createMailDailyContent()}
-    ${createMailWeeklyContent()}
-  `};
+  return createMailDailyContent() + createMailWeeklyContent();
+};
 
 const getMailBody = function () {
   return `
