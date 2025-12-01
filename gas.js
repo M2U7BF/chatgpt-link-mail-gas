@@ -4,7 +4,7 @@ var getChatgptUrl = function (/** @type {any} */ prompt) {
   return chatgpt_url;
 };
 
-var getChatgptButtonElement = function (/** @type {string} */ prompt) {
+var createChatgptButtonElement = function (/** @type {string} */ prompt) {
   return `
   <div class="button-block">
     <div class="button-title">${prompt}</div>
@@ -19,37 +19,37 @@ var getChatgptButtonElement = function (/** @type {string} */ prompt) {
 
 // ----------------------------------------
 
-const mail_content_everyday = function () {
+const createMailDailyContent = function () {
   return `
-  ${getChatgptButtonElement(`人間の生活を変えたり業界変革を起こすような技術、スタートアップの情報を直近3ヶ月に絞って調べて、5つ選んでまとめて。`)}
+  ${createChatgptButtonElement(`人間の生活を変えたり業界変革を起こすような技術、スタートアップの情報を直近3ヶ月に絞って調べて、5つ選んでまとめて。`)}
   `;
 }
 
-const mail_content_week = function () {
+const createMailWeeklyContent = function () {
   const day = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   switch (day) {
     case 'Tuesday':
       return `
-      ${getChatgptButtonElement(`直近一週間の日本、中国、フランス、ロシア、英国、米国の株式市場について、分析して。また各国で注目すべき個別銘柄5選をランダムに選んで紹介して。`)}
-      ${getChatgptButtonElement(`直近一週間の日本国内と海外でのセキュリティ関連の事件（ハッキング、障害）についてまとめて。`)}
+      ${createChatgptButtonElement(`直近一週間の日本、中国、フランス、ロシア、英国、米国の株式市場について、分析して。また各国で注目すべき個別銘柄5選をランダムに選んで紹介して。`)}
+      ${createChatgptButtonElement(`直近一週間の日本国内と海外でのセキュリティ関連の事件（ハッキング、障害）についてまとめて。`)}
       `;
     case 'Thursday':
       return `
-      ${getChatgptButtonElement(`直近一週間の海外メディアが日本の経済と政治を報じた内容をわかりやすくまとめて。必要であれば過去の経緯を足して。`)}
-      ${getChatgptButtonElement(`癒やされる旅行先を5つ、直近一週間のSNSの投稿を参考にして選んで紹介して。総予算が5万円以内で行けるもので。`)}
+      ${createChatgptButtonElement(`直近一週間の海外メディアが日本の経済と政治を報じた内容をわかりやすくまとめて。必要であれば過去の経緯を足して。`)}
+      ${createChatgptButtonElement(`癒やされる旅行先を5つ、直近一週間のSNSの投稿を参考にして選んで紹介して。総予算が5万円以内で行けるもので。`)}
       `;
     default:
       return ``;
   }
 }
 
-const button_list = function () {
+const createButtonList = function () {
   return `
-    ${mail_content_everyday()}
-    ${mail_content_week()}
+    ${createMailDailyContent()}
+    ${createMailWeeklyContent()}
   `};
 
-const mail_layout = function () {
+const getMailBody = function () {
   return `
   <!DOCTYPE html>
   <html>
@@ -144,14 +144,27 @@ const mail_layout = function () {
   
   <body>
     <div class="container">
-      <!-- <div class="description">
-        以下のボタンから ChatGPT に移動できます。
-      </div> -->
-      ${button_list()}
+      ${createButtonList()}
     </div>
   </body>
   
   </html>`
 };
 
-return { html : `${mail_layout()}` };
+
+// main -----------------------------------
+/**
+ * メール送信メイン関数
+ */
+function sendMail() {
+  const props = PropertiesService.getScriptProperties();
+
+  const to      = props.getProperty("MAIL_TO");
+  const subject = "毎日ChatGPTメール";
+
+  const bodyHtml = getMailBody();
+
+  GmailApp.sendEmail(to, subject, "", {
+    htmlBody: bodyHtml
+  });
+}
