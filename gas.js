@@ -93,12 +93,11 @@ const createMailWeeklyContent = function () {
 }
 
 const createMailMonthlyContent = function () {
-  monthlyPrompts.forEach(function (monthlyPrompt) {
+  for (const monthlyPrompt of monthlyPrompts) {
     if (monthlyPrompt.day === new Date().getDate()) {
       return promptsToButtonElements(monthlyPrompt.prompts);
     }
-  });
-
+  }
   return '';
 }
 
