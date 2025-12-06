@@ -20,6 +20,14 @@ const fridayPrompts = [];
 const saturdayPrompts = [];
 const sundayPrompts = [];
 
+// 毎月、特定の日付に送信するプロンプト
+const monthlyPrompts = [
+  {
+    day: 7,
+    prompts: ["直近1ヶ月で国内で話題となっている映画について、概要、カテゴリ、対象年齢、興行収入を表にして教えて"]
+  }
+];
+
 // util -----------------------------------
 var getChatgptUrl = function (/** @type {any} */ prompt) {
   const chatgptUrl = `https://chatgpt.com/?mode=default&prompt=${encodeURI(prompt)}`
@@ -84,8 +92,18 @@ const createMailWeeklyContent = function () {
   return promptsToButtonElements(prompts);
 }
 
+const createMailMonthlyContent = function () {
+  monthlyPrompts.forEach(function (monthlyPrompt) {
+    if (monthlyPrompt.day === new Date().getDate()) {
+      return promptsToButtonElements(monthlyPrompt.prompts);
+    }
+  });
+
+  return '';
+}
+
 const createButtonList = function () {
-  return createMailDailyContent() + createMailWeeklyContent();
+  return createMailDailyContent() + createMailWeeklyContent() + createMailMonthlyContent();
 };
 
 const getMailBody = function () {
